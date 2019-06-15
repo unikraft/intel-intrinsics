@@ -4999,15 +4999,6 @@ _mm_castsi128_pd(__m128i __a)
 extern "C" {
 #endif
 
-/// Indicates that a spin loop is being executed for the purposes of
-///    optimizing power consumption during the loop.
-///
-/// \headerfile <x86intrin.h>
-///
-/// This intrinsic corresponds to the <c> PAUSE </c> instruction.
-///
-void _mm_pause(void);
-
 #if defined(__cplusplus)
 } // extern "C"
 #endif

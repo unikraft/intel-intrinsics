@@ -25,6 +25,15 @@
 #define __XMMINTRIN_H
 
 #include <mmintrin.h>
+/* Define the default attributes for the functions in this file. */
+#ifdef  __GNUC__
+#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+#define __DEFAULT_FN_ATTRS_MMX __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+#else
+#define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse2"), __min_vector_width__(128)))
+#define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,sse2"), __min_vector_width__(64)))
+#endif
+
 
 typedef int __v4si __attribute__((__vector_size__(16)));
 typedef float __v4sf __attribute__((__vector_size__(16)));
@@ -37,15 +46,6 @@ typedef unsigned int __v4su __attribute__((__vector_size__(16)));
  * a standard library to provide allocation routines. */
 #if __STDC_HOSTED__
 #include <mm_malloc.h>
-#endif
-
-/* Define the default attributes for the functions in this file. */
-#ifdef  __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
-#define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse"), __min_vector_width__(128)))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,sse"), __min_vector_width__(64)))
 #endif
 
 #define _MM_SHUFFLE(z, y, x, w) (((z) << 6) | ((y) << 4) | ((x) << 2) | (w))
@@ -3085,6 +3085,18 @@ do { \
 #define _m_psadbw _mm_sad_pu8
 #define _m_ _mm_
 #define _m_ _mm_
+
+/// Indicates that a spin loop is being executed for the purposes of
+///    optimizing power consumption during the loop.
+///
+/// \headerfile <x86intrin.h>
+///
+/// This intrinsic corresponds to the <c> PAUSE </c> instruction.
+///
+static inline void __DEFAULT_FN_ATTRS _mm_pause(void)
+{
+	__builtin_ia32_pause();
+}
 
 #undef __DEFAULT_FN_ATTRS
 #undef __DEFAULT_FN_ATTRS_MMX
