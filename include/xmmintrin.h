@@ -3101,6 +3101,20 @@ static inline void __DEFAULT_FN_ATTRS _mm_pause(void)
 #undef __DEFAULT_FN_ATTRS
 #undef __DEFAULT_FN_ATTRS_MMX
 
+/* Set the control register to I.  */
+extern __inline void __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+_mm_setcsr (unsigned int __I)
+{
+  __builtin_ia32_ldmxcsr (__I);
+}
+
+/* Return the contents of the control register.  */
+extern __inline unsigned int __attribute__((__gnu_inline__, __always_inline__, __artificial__))
+_mm_getcsr (void)
+{
+  return __builtin_ia32_stmxcsr ();
+}
+
 /* Ugly hack for backwards-compatibility (compatible with gcc) */
 #ifdef __GNUC__
 #include <emmintrin.h>
