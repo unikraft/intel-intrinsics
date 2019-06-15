@@ -163,9 +163,15 @@ _mm_abs_epi32(__m128i __a)
 ///    An immediate operand specifying how many bytes to right-shift the result.
 /// \returns A 128-bit integer vector containing the concatenated right-shifted
 ///    value.
+#ifdef __GNUC__
+#define _mm_alignr_epi8(a, b, n) \
+  (__m128i)__builtin_ia32_palignr128((__v2di)(__m128i)(a), \
+                                     (__v2di)(__m128i)(b), (n))
+#else
 #define _mm_alignr_epi8(a, b, n) \
   (__m128i)__builtin_ia32_palignr128((__v16qi)(__m128i)(a), \
                                      (__v16qi)(__m128i)(b), (n))
+#endif
 
 /// Concatenates the two 64-bit integer vector operands, and right-shifts
 ///    the result by the number of bytes specified in the immediate operand.
