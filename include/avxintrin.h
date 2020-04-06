@@ -2035,8 +2035,17 @@ _mm256_blendv_ps(__m256 __a, __m256 __b, __m256 __c)
 ///    element is extracted and returned.
 /// \returns A 64-bit integer containing the extracted 64 bits of extended
 ///    packed data.
+#ifdef __clang__
 #define _mm256_extract_epi64(X, N) \
   (long long)__builtin_ia32_vec_ext_v4di((__v4di)(__m256i)(X), (int)(N))
+#else
+#define _mm256_extract_epi64(X, N)					\
+	  (__extension__							\
+	      ({									\
+	             __m128i __Y = _mm256_extractf128_si256 ((X), (N) >> 1);		\
+		           _mm_extract_epi64 (__Y, (N) % 2);					\
+			       }))
+#endif
 #endif
 
 /// Takes a [8 x i32] vector and replaces the vector element value
