@@ -1,0 +1,4 @@
+name        := "intel-intrinsics"
+description := "C-style functions that provide access Intel instruction set."
+homepage    := "https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html"
+license     := "GPL-3.0"
