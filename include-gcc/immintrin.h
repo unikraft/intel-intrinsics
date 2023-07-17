@@ -44,9 +44,11 @@
 
 #include <avxvnniintrin.h>
 
+#if (__GNUC__ >= 13)
 #include <avxifmaintrin.h>
 
 #include <avxvnniint8intrin.h>
+#endif
 
 #include <avx2intrin.h>
 
@@ -123,7 +125,9 @@
 
 #include <avx512bf16intrin.h>
 
+#if (__GNUC__ >= 13)
 #include <avxneconvertintrin.h>
+#endif
 #endif
 
 #include <amxtileintrin.h>
@@ -132,12 +136,16 @@
 
 #include <amxbf16intrin.h>
 
+#if (__GNUC__ >= 13)
 #include <amxcomplexintrin.h>
+#endif
 
 #include <prfchwintrin.h>
 
 #include <keylockerintrin.h>
 
+#if (__GNUC__ >= 13)
 #include <amxfp16intrin.h>
+#endif
 
 #endif /* _IMMINTRIN_H_INCLUDED */
