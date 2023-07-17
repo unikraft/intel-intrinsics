@@ -100,10 +100,12 @@
 
 #include <avx512vp2intersectvlintrin.h>
 
+#if (__GNUC__ >= 12)
 #ifdef __SSE2__
 #include <avx512fp16intrin.h>
 
 #include <avx512fp16vlintrin.h>
+#endif
 #endif
 
 #include <shaintrin.h>
@@ -120,6 +122,7 @@
 
 #include <vpclmulqdqintrin.h>
 
+#if (__GNUC__ >= 12)
 #ifdef __SSE2__
 #include <avx512bf16vlintrin.h>
 
@@ -127,6 +130,7 @@
 
 #if (__GNUC__ >= 13)
 #include <avxneconvertintrin.h>
+#endif
 #endif
 #endif
 
