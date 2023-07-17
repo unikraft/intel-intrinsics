@@ -27,13 +27,8 @@
 #include <pmmintrin.h>
 
 /* Define the default attributes for the functions in this file. */
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("ssse3"), __min_vector_width__(64)))
 #define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,ssse3"), __min_vector_width__(64)))
-#endif
 
 /// Computes the absolute value of each of the packed 8-bit signed
 ///    integers in the source operand and stores the 8-bit unsigned integer
@@ -163,15 +158,9 @@ _mm_abs_epi32(__m128i __a)
 ///    An immediate operand specifying how many bytes to right-shift the result.
 /// \returns A 128-bit integer vector containing the concatenated right-shifted
 ///    value.
-#ifdef __GNUC__
-#define _mm_alignr_epi8(a, b, n) \
-  (__m128i)__builtin_ia32_palignr128((__v2di)(__m128i)(a), \
-                                     (__v2di)(__m128i)(b), (n))
-#else
 #define _mm_alignr_epi8(a, b, n) \
   (__m128i)__builtin_ia32_palignr128((__v16qi)(__m128i)(a), \
                                      (__v16qi)(__m128i)(b), (n))
-#endif
 
 /// Concatenates the two 64-bit integer vector operands, and right-shifts
 ///    the result by the number of bytes specified in the immediate operand.

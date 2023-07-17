@@ -45,15 +45,8 @@ typedef unsigned char __v16qu __attribute__((__vector_size__(16)));
 typedef signed char __v16qs __attribute__((__vector_size__(16)));
 
 /* Define the default attributes for the functions in this file. */
-#ifdef  __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse2"), __min_vector_width__(128)))
 #define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,sse2"), __min_vector_width__(64)))
-#endif
-
-#define _MM_SHUFFLE2(x, y) (((x) << 1) | (y))
 
 /// Adds lower double-precision values in both operands and returns the
 ///    sum in the lower 64 bits of the result. The upper 64 bits of the result
@@ -1332,12 +1325,8 @@ _mm_cvtpd_ps(__m128d __a)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_cvtps_pd(__m128 __a)
 {
-#ifdef __GNUC__
-  return (__m128d)__builtin_ia32_cvtps2pd ((__v4sf) __a);
-#else
   return (__m128d) __builtin_convertvector(
       __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 0, 1), __v2df);
-#endif
 }
 
 /// Converts the lower two integer elements of a 128-bit vector of
@@ -1359,12 +1348,8 @@ _mm_cvtps_pd(__m128 __a)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_cvtepi32_pd(__m128i __a)
 {
-#ifdef __GNUC__
-  return (__m128d)__builtin_ia32_cvtdq2pd ((__v4si) __a);
-#else
   return (__m128d) __builtin_convertvector(
       __builtin_shufflevector((__v4si)__a, (__v4si)__a, 0, 1), __v2df);
-#endif
 }
 
 /// Converts the two double-precision floating-point elements of a
@@ -1383,11 +1368,7 @@ _mm_cvtepi32_pd(__m128i __a)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtpd_epi32(__m128d __a)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_cvtpd2dq ((__v2df) __a);
-#else
   return __builtin_ia32_cvtpd2dq((__v2df)__a);
-#endif
 }
 
 /// Converts the low-order element of a 128-bit vector of [2 x double]
@@ -1652,13 +1633,8 @@ _mm_load1_pd(double const *__dp)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_loadr_pd(double const *__dp)
 {
-#ifdef __GNUC__
-  __m128d __tmp = _mm_load_pd (__dp);
-  return __builtin_ia32_shufpd (__tmp, __tmp, _MM_SHUFFLE2 (0,1));
-#else
   __m128d __u = *(__m128d*)__dp;
   return __builtin_shufflevector((__v2df)__u, (__v2df)__u, 1, 0);
-#endif
 }
 
 /// Loads a 128-bit floating-point vector of [2 x double] from an
@@ -1791,12 +1767,7 @@ _mm_loadl_pd(__m128d __a, double const *__dp)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_undefined_pd(void)
 {
-#ifdef __GNUC__
-  __m128d __X = __X;
-  return __X;
-#else
   return (__m128d)__builtin_ia32_undef128();
-#endif
 }
 
 /// Constructs a 128-bit floating-point vector of [2 x double]. The lower
@@ -1989,12 +1960,8 @@ _mm_store_pd(double *__dp, __m128d __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_store1_pd(double *__dp, __m128d __a)
 {
-#ifdef __GNUC__
-  _mm_store_pd (__dp, __builtin_ia32_shufpd (__a, __a, _MM_SHUFFLE2 (0,0)));
-#else
   __a = __builtin_shufflevector((__v2df)__a, (__v2df)__a, 0, 0);
   _mm_store_pd(__dp, __a);
-#endif
 }
 
 /// Moves the lower 64 bits of a 128-bit vector of [2 x double] twice to
@@ -2055,12 +2022,8 @@ _mm_storeu_pd(double *__dp, __m128d __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_storer_pd(double *__dp, __m128d __a)
 {
-#ifdef __GNUC__
-  _mm_store_pd (__dp, __builtin_ia32_shufpd (__a, __a, _MM_SHUFFLE2 (0,1)));
-#else
   __a = __builtin_shufflevector((__v2df)__a, (__v2df)__a, 1, 0);
   *(__m128d *)__dp = __a;
-#endif
 }
 
 /// Stores the upper 64 bits of a 128-bit vector of [2 x double] to a
@@ -2181,13 +2144,11 @@ _mm_add_epi32(__m128i __a, __m128i __b)
 /// \param __b
 ///    A 64-bit integer.
 /// \returns A 64-bit integer containing the sum of both parameters.
-#ifndef __GNUC__
 static __inline__ __m64 __DEFAULT_FN_ATTRS_MMX
 _mm_add_si64(__m64 __a, __m64 __b)
 {
   return (__m64)__builtin_ia32_paddq((__v1di)__a, (__v1di)__b);
 }
-#endif
 
 /// Adds the corresponding elements of two 128-bit vectors of [2 x i64],
 ///    saving the lower 64 bits of each sum in the corresponding element of a
@@ -2313,15 +2274,11 @@ _mm_adds_epu16(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_avg_epu8(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_pavgb128 ((__v16qi)__a, (__v16qi)__b);
-#else
   typedef unsigned short __v16hu __attribute__ ((__vector_size__ (32)));
   return (__m128i)__builtin_convertvector(
                ((__builtin_convertvector((__v16qu)__a, __v16hu) +
                  __builtin_convertvector((__v16qu)__b, __v16hu)) + 1)
                  >> 1, __v16qu);
-#endif
 }
 
 /// Computes the rounded avarages of corresponding elements of two
@@ -2341,15 +2298,11 @@ _mm_avg_epu8(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_avg_epu16(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_pavgw128 ((__v8hi)__a, (__v8hi)__b);
-#else
   typedef unsigned int __v8su __attribute__ ((__vector_size__ (32)));
   return (__m128i)__builtin_convertvector(
                ((__builtin_convertvector((__v8hu)__a, __v8su) +
                  __builtin_convertvector((__v8hu)__b, __v8su)) + 1)
                  >> 1, __v8hu);
-#endif
 }
 
 /// Multiplies the corresponding elements of two 128-bit signed [8 x i16]
@@ -2534,11 +2487,7 @@ _mm_mullo_epi16(__m128i __a, __m128i __b)
 static __inline__ __m64 __DEFAULT_FN_ATTRS_MMX
 _mm_mul_su32(__m64 __a, __m64 __b)
 {
-#ifdef __GNUC__
-  return (__m64)__builtin_ia32_pmuludq ((__v2si)__a, (__v2si)__b);
-#else
   return __builtin_ia32_pmuludq((__v2si)__a, (__v2si)__b);
-#endif
 }
 
 /// Multiplies 32-bit unsigned integer values contained in the lower
@@ -2649,14 +2598,11 @@ _mm_sub_epi32(__m128i __a, __m128i __b)
 ///    A 64-bit integer vector containing the subtrahend.
 /// \returns A 64-bit integer vector containing the difference of the values in
 ///    the operands.
-
-#ifndef __GNUC__
 static __inline__ __m64 __DEFAULT_FN_ATTRS_MMX
 _mm_sub_si64(__m64 __a, __m64 __b)
 {
   return (__m64)__builtin_ia32_psubq((__v1di)__a, (__v1di)__b);
 }
-#endif
 
 /// Subtracts the corresponding elements of two [2 x i64] vectors.
 ///
@@ -3065,18 +3011,11 @@ _mm_sra_epi32(__m128i __a, __m128i __count)
 ///    An immediate value specifying the number of bytes to right-shift operand
 ///    \a a.
 /// \returns A 128-bit integer vector containing the right-shifted value.
-#ifdef __GNUC__
-#define _mm_bsrli_si128(a, n) \
-    ((__m128i)__builtin_ia32_psrldqi128 ((__m128i)(a), (int)(n) * 8))
-#define _mm_srli_si128(a, n) \
-    ((__m128i)__builtin_ia32_psrldqi128 ((__m128i)(a), (int)(n) * 8))
-#else
 #define _mm_srli_si128(a, imm) \
   (__m128i)__builtin_ia32_psrldqi128_byteshift((__v2di)(__m128i)(a), (int)(imm))
+
 #define _mm_bsrli_si128(a, imm) \
   (__m128i)__builtin_ia32_psrldqi128_byteshift((__v2di)(__m128i)(a), (int)(imm))
-#endif
-
 
 /// Right-shifts each of 16-bit values in the 128-bit integer vector
 ///    operand by the specified number of bits. High-order bits are cleared.
@@ -3449,11 +3388,7 @@ _mm_cvttsd_si64(__m128d __a)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_cvtepi32_ps(__m128i __a)
 {
-#ifdef __GNUC__
-  return (__m128)__builtin_ia32_cvtdq2ps ((__v4si) __a);
-#else
   return (__m128)__builtin_convertvector((__v4si)__a, __v4sf);
-#endif
 }
 
 /// Converts a vector of [4 x float] into a vector of [4 x i32].
@@ -3628,12 +3563,7 @@ _mm_loadl_epi64(__m128i const *__p)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_undefined_si128(void)
 {
-#ifdef __GNUC__
-  __m128i __X = __X;
-  return __X;
-#else
   return (__m128i)__builtin_ia32_undef128();
-#endif
 }
 
 /// Initializes both 64-bit values in a 128-bit vector of [2 x i64] with
@@ -4129,11 +4059,7 @@ _mm_storel_epi64(__m128i *__p, __m128i __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_stream_pd(double *__p, __m128d __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntpd (__p, (__v2df)__a);
-#else
   __builtin_nontemporal_store((__v2df)__a, (__v2df*)__p);
-#endif
 }
 
 /// Stores a 128-bit integer vector to a 128-bit aligned memory location.
@@ -4152,11 +4078,7 @@ _mm_stream_pd(double *__p, __m128d __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_stream_si128(__m128i *__p, __m128i __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntdq ((__v2di *)__p, (__v2di)__a);
-#else
   __builtin_nontemporal_store((__v2di)__a, (__v2di*)__p);
-#endif
 }
 
 /// Stores a 32-bit integer value in the specified memory location.
@@ -4172,12 +4094,7 @@ _mm_stream_si128(__m128i *__p, __m128i __a)
 ///    A pointer to the 32-bit memory location used to store the value.
 /// \param __a
 ///    A 32-bit integer containing the value to be stored.
-static __inline__ void
-#ifdef __GNUC__
-__attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
-__attribute__((__always_inline__, __nodebug__, __target__("sse2")))
-#endif
+static __inline__ void __attribute__((__always_inline__, __nodebug__, __target__("sse2")))
 _mm_stream_si32(int *__p, int __a)
 {
   __builtin_ia32_movnti(__p, __a);
@@ -4197,12 +4114,7 @@ _mm_stream_si32(int *__p, int __a)
 ///    A pointer to the 64-bit memory location used to store the value.
 /// \param __a
 ///    A 64-bit integer containing the value to be stored.
-static __inline__ void
-#ifdef __GNUC__
-__attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
-__attribute__((__always_inline__, __nodebug__, __target__("sse2")))
-#endif
+static __inline__ void __attribute__((__always_inline__, __nodebug__, __target__("sse2")))
 _mm_stream_si64(long long *__p, long long __a)
 {
   __builtin_ia32_movnti64(__p, __a);
@@ -4526,11 +4438,7 @@ _mm_movemask_epi8(__m128i __a)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpackhi_epi8(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpckhbw128 ((__v16qi)__a, (__v16qi)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v16qi)__a, (__v16qi)__b, 8, 16+8, 9, 16+9, 10, 16+10, 11, 16+11, 12, 16+12, 13, 16+13, 14, 16+14, 15, 16+15);
-#endif
 }
 
 /// Unpacks the high-order (index 4-7) values from two 128-bit vectors of
@@ -4557,11 +4465,7 @@ _mm_unpackhi_epi8(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpackhi_epi16(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpckhwd128 ((__v8hi)__a, (__v8hi)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v8hi)__a, (__v8hi)__b, 4, 8+4, 5, 8+5, 6, 8+6, 7, 8+7);
-#endif
 }
 
 /// Unpacks the high-order (index 2,3) values from two 128-bit vectors of
@@ -4584,11 +4488,7 @@ _mm_unpackhi_epi16(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpackhi_epi32(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpckhdq128 ((__v4si)__a, (__v4si)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v4si)__a, (__v4si)__b, 2, 4+2, 3, 4+3);
-#endif
 }
 
 /// Unpacks the high-order 64-bit elements from two 128-bit vectors of
@@ -4609,11 +4509,7 @@ _mm_unpackhi_epi32(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpackhi_epi64(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpckhqdq128 ((__v2di)__a, (__v2di)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v2di)__a, (__v2di)__b, 1, 2+1);
-#endif
 }
 
 /// Unpacks the low-order (index 0-7) values from two 128-bit vectors of
@@ -4648,11 +4544,7 @@ _mm_unpackhi_epi64(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpacklo_epi8(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpcklbw128 ((__v16qi)__a, (__v16qi)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v16qi)__a, (__v16qi)__b, 0, 16+0, 1, 16+1, 2, 16+2, 3, 16+3, 4, 16+4, 5, 16+5, 6, 16+6, 7, 16+7);
-#endif
 }
 
 /// Unpacks the low-order (index 0-3) values from each of the two 128-bit
@@ -4680,11 +4572,7 @@ _mm_unpacklo_epi8(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpacklo_epi16(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpcklwd128 ((__v8hi)__a, (__v8hi)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v8hi)__a, (__v8hi)__b, 0, 8+0, 1, 8+1, 2, 8+2, 3, 8+3);
-#endif
 }
 
 /// Unpacks the low-order (index 0,1) values from two 128-bit vectors of
@@ -4707,11 +4595,7 @@ _mm_unpacklo_epi16(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpacklo_epi32(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpckldq128 ((__v4si)__a, (__v4si)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v4si)__a, (__v4si)__b, 0, 4+0, 1, 4+1);
-#endif
 }
 
 /// Unpacks the low-order 64-bit elements from two 128-bit vectors of
@@ -4732,11 +4616,7 @@ _mm_unpacklo_epi32(__m128i __a, __m128i __b)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_unpacklo_epi64(__m128i __a, __m128i __b)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_punpcklqdq128 ((__v2di)__a, (__v2di)__b);
-#else
   return (__m128i)__builtin_shufflevector((__v2di)__a, (__v2di)__b, 0, 2+0);
-#endif
 }
 
 /// Returns the lower 64 bits of a 128-bit integer vector as a 64-bit
@@ -4788,11 +4668,7 @@ _mm_movpi64_epi64(__m64 __a)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_move_epi64(__m128i __a)
 {
-#ifdef __GNUC__
-  return (__m128i)__builtin_ia32_movq128 ((__v2di) __a);
-#else
   return __builtin_shufflevector((__v2di)__a, _mm_setzero_si128(), 0, 2);
-#endif
 }
 
 /// Unpacks the high-order 64-bit elements from two 128-bit vectors of
@@ -4813,11 +4689,7 @@ _mm_move_epi64(__m128i __a)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_unpackhi_pd(__m128d __a, __m128d __b)
 {
-#ifdef __GNUC__
-  return (__m128d)__builtin_ia32_unpckhpd ((__v2df)__a, (__v2df)__b);
-#else
   return __builtin_shufflevector((__v2df)__a, (__v2df)__b, 1, 2+1);
-#endif
 }
 
 /// Unpacks the low-order 64-bit elements from two 128-bit vectors
@@ -4838,11 +4710,7 @@ _mm_unpackhi_pd(__m128d __a, __m128d __b)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_unpacklo_pd(__m128d __a, __m128d __b)
 {
-#ifdef __GNUC__
-  return (__m128d)__builtin_ia32_unpcklpd ((__v2df)__a, (__v2df)__b);
-#else
   return __builtin_shufflevector((__v2df)__a, (__v2df)__b, 0, 2+0);
-#endif
 }
 
 /// Extracts the sign bits of the double-precision values in the 128-bit
@@ -4999,26 +4867,29 @@ _mm_castsi128_pd(__m128i __a)
 extern "C" {
 #endif
 
+/// Indicates that a spin loop is being executed for the purposes of
+///    optimizing power consumption during the loop.
+///
+/// \headerfile <x86intrin.h>
+///
+/// This intrinsic corresponds to the <c> PAUSE </c> instruction.
+///
+void _mm_pause(void);
+
 #if defined(__cplusplus)
 } // extern "C"
 #endif
 #undef __DEFAULT_FN_ATTRS
 #undef __DEFAULT_FN_ATTRS_MMX
 
-#ifndef _MM_DENORMALS_ZERO_ON
+#define _MM_SHUFFLE2(x, y) (((x) << 1) | (y))
+
 #define _MM_DENORMALS_ZERO_ON   (0x0040)
-#endif
-#ifndef _MM_DENORMALS_ZERO_OFF
 #define _MM_DENORMALS_ZERO_OFF  (0x0000)
-#endif
 
-#ifndef _MM_DENORMALS_ZERO_MASK
 #define _MM_DENORMALS_ZERO_MASK (0x0040)
-#endif
 
-#ifndef _MM_GET_DENORMALS_ZERO_MODE
 #define _MM_GET_DENORMALS_ZERO_MODE() (_mm_getcsr() & _MM_DENORMALS_ZERO_MASK)
 #define _MM_SET_DENORMALS_ZERO_MODE(x) (_mm_setcsr((_mm_getcsr() & ~_MM_DENORMALS_ZERO_MASK) | (x)))
-#endif
 
 #endif /* __EMMINTRIN_H */
