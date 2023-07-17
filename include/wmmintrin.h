@@ -1,4 +1,4 @@
-/*===---- nmmintrin.h - SSE4 intrinsics ------------------------------------===
+/*===---- wmmintrin.h - AES intrinsics ------------------------------------===
  *
  * Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
  * See https://llvm.org/LICENSE.txt for license information.
@@ -7,14 +7,17 @@
  *===-----------------------------------------------------------------------===
  */
 
-#ifndef __NMMINTRIN_H
-#define __NMMINTRIN_H
+#ifndef __WMMINTRIN_H
+#define __WMMINTRIN_H
 
 #if !defined(__i386__) && !defined(__x86_64__)
 #error "This header is only meant to be used on x86 and x64 architecture"
 #endif
 
-/* To match expectations of gcc we put the sse4.2 definitions into smmintrin.h,
-   just include it now then.  */
-#include <smmintrin.h>
-#endif /* __NMMINTRIN_H */
+#include <emmintrin.h>
+
+#include <__wmmintrin_aes.h>
+
+#include <__wmmintrin_pclmul.h>
+
+#endif /* __WMMINTRIN_H */
