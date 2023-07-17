@@ -25,15 +25,6 @@
 #define __XMMINTRIN_H
 
 #include <mmintrin.h>
-/* Define the default attributes for the functions in this file. */
-#ifdef  __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
-#define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse2"), __min_vector_width__(128)))
-#define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,sse2"), __min_vector_width__(64)))
-#endif
-
 
 typedef int __v4si __attribute__((__vector_size__(16)));
 typedef float __v4sf __attribute__((__vector_size__(16)));
@@ -48,8 +39,9 @@ typedef unsigned int __v4su __attribute__((__vector_size__(16)));
 #include <mm_malloc.h>
 #endif
 
-#define _MM_SHUFFLE(z, y, x, w) (((z) << 6) | ((y) << 4) | ((x) << 2) | (w))
-
+/* Define the default attributes for the functions in this file. */
+#define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse"), __min_vector_width__(128)))
+#define __DEFAULT_FN_ATTRS_MMX __attribute__((__always_inline__, __nodebug__, __target__("mmx,sse"), __min_vector_width__(64)))
 
 /// Adds the 32-bit float values in the low-order bits of the operands.
 ///
@@ -630,14 +622,9 @@ _mm_cmple_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_cmpgt_ss(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movss ((__v4sf) __a, (__v4sf)
-		__builtin_ia32_cmpltss ((__v4sf) __b, (__v4sf) __a));
-#else
   return (__m128)__builtin_shufflevector((__v4sf)__a,
                                          (__v4sf)__builtin_ia32_cmpltss((__v4sf)__b, (__v4sf)__a),
                                          4, 1, 2, 3);
-#endif
 }
 
 /// Compares each of the corresponding 32-bit float values of the
@@ -680,14 +667,9 @@ _mm_cmpgt_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_cmpge_ss(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movss ((__v4sf) __a, (__v4sf)
-		__builtin_ia32_cmpless ((__v4sf) __b, (__v4sf) __a));
-#else
   return (__m128)__builtin_shufflevector((__v4sf)__a,
                                          (__v4sf)__builtin_ia32_cmpless((__v4sf)__b, (__v4sf)__a),
                                          4, 1, 2, 3);
-#endif
 }
 
 /// Compares each of the corresponding 32-bit float values of the
@@ -862,15 +844,9 @@ _mm_cmpnle_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_cmpngt_ss(__m128 __a, __m128 __b)
 {
-
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movss ((__v4sf) __a, (__v4sf)
-		__builtin_ia32_cmpnltss ((__v4sf) __b, (__v4sf) __a));
-#else
   return (__m128)__builtin_shufflevector((__v4sf)__a,
                                          (__v4sf)__builtin_ia32_cmpnltss((__v4sf)__b, (__v4sf)__a),
                                          4, 1, 2, 3);
-#endif
 }
 
 /// Compares each of the corresponding 32-bit float values of the
@@ -915,14 +891,9 @@ _mm_cmpngt_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_cmpnge_ss(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movss ((__v4sf) __a, (__v4sf)
-		__builtin_ia32_cmpnless ((__v4sf) __b, (__v4sf) __a));
-#else
   return (__m128)__builtin_shufflevector((__v4sf)__a,
                                          (__v4sf)__builtin_ia32_cmpnless((__v4sf)__b, (__v4sf)__a),
                                          4, 1, 2, 3);
-#endif
 }
 
 /// Compares each of the corresponding 32-bit float values of the
@@ -1664,9 +1635,6 @@ _mm_cvtss_f32(__m128 __a)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_loadh_pi(__m128 __a, const __m64 *__p)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_loadhps ((__v4sf)__a, (const __v2sf *)__p);
-#else
   typedef float __mm_loadh_pi_v2f32 __attribute__((__vector_size__(8)));
   struct __mm_loadh_pi_struct {
     __mm_loadh_pi_v2f32 __u;
@@ -1674,7 +1642,6 @@ _mm_loadh_pi(__m128 __a, const __m64 *__p)
   __mm_loadh_pi_v2f32 __b = ((struct __mm_loadh_pi_struct*)__p)->__u;
   __m128 __bb = __builtin_shufflevector(__b, __b, 0, 1, 0, 1);
   return __builtin_shufflevector(__a, __bb, 0, 1, 4, 5);
-#endif
 }
 
 /// Loads two packed float values from the address \a __p into the
@@ -1695,9 +1662,6 @@ _mm_loadh_pi(__m128 __a, const __m64 *__p)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_loadl_pi(__m128 __a, const __m64 *__p)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_loadlps ((__v4sf)__a, (const __v2sf *)__p);
-#else
   typedef float __mm_loadl_pi_v2f32 __attribute__((__vector_size__(8)));
   struct __mm_loadl_pi_struct {
     __mm_loadl_pi_v2f32 __u;
@@ -1705,7 +1669,6 @@ _mm_loadl_pi(__m128 __a, const __m64 *__p)
   __mm_loadl_pi_v2f32 __b = ((struct __mm_loadl_pi_struct*)__p)->__u;
   __m128 __bb = __builtin_shufflevector(__b, __b, 0, 1, 0, 1);
   return __builtin_shufflevector(__a, __bb, 4, 5, 2, 3);
-#endif
 }
 
 /// Constructs a 128-bit floating-point vector of [4 x float]. The lower
@@ -1810,12 +1773,8 @@ _mm_loadu_ps(const float *__p)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_loadr_ps(const float *__p)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_shufps (*(__v4sf *)__p, *(__v4sf *)__p, _MM_SHUFFLE (0,1,2,3));
-#else
   __m128 __a = _mm_load_ps(__p);
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 3, 2, 1, 0);
-#endif
 }
 
 /// Create a 128-bit vector of [4 x float] with undefined values.
@@ -1828,12 +1787,7 @@ _mm_loadr_ps(const float *__p)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_undefined_ps(void)
 {
-#ifdef __GNUC__
-  __m128 __X = __X;
-  return __X;
-#else
   return (__m128)__builtin_ia32_undef128();
-#endif
 }
 
 /// Constructs a 128-bit floating-point vector of [4 x float]. The lower
@@ -1977,11 +1931,7 @@ _mm_setzero_ps(void)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_storeh_pi(__m64 *__p, __m128 __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_storehps((__v2sf *)__p, (__v4sf)__a);
-#else
   __builtin_ia32_storehps((__v2si *)__p, (__v4sf)__a);
-#endif
 }
 
 /// Stores the lower 64 bits of a 128-bit vector of [4 x float] to a
@@ -1998,11 +1948,7 @@ _mm_storeh_pi(__m64 *__p, __m128 __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_storel_pi(__m64 *__p, __m128 __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_storelps ((__v2sf *)__p, (__v4sf)__a);
-#else
   __builtin_ia32_storelps((__v2si *)__p, (__v4sf)__a);
-#endif
 }
 
 /// Stores the lower 32 bits of a 128-bit vector of [4 x float] to a
@@ -2080,11 +2026,7 @@ _mm_store_ps(float *__p, __m128 __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_store1_ps(float *__p, __m128 __a)
 {
-#ifdef __GNUC__
-  __a = (__m128)__builtin_ia32_shufps((__v4sf)__a, (__v4sf)__a, _MM_SHUFFLE (0,0,0,0));
-#else
-  __a = (__m128)__builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 0, 0, 0, 0);
-#endif
+  __a = __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 0, 0, 0, 0);
   _mm_store_ps(__p, __a);
 }
 
@@ -2123,11 +2065,7 @@ _mm_store_ps1(float *__p, __m128 __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_storer_ps(float *__p, __m128 __a)
 {
-#ifdef __GNUC__
-  __a = __builtin_ia32_shufps ((__v4sf)__a, (__v4sf)__a, _MM_SHUFFLE (0,1,2,3));
-#else
   __a = __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 3, 2, 1, 0);
-#endif
   _mm_store_ps(__p, __a);
 }
 
@@ -2185,11 +2123,7 @@ _mm_storer_ps(float *__p, __m128 __a)
 static __inline__ void __DEFAULT_FN_ATTRS_MMX
 _mm_stream_pi(__m64 *__p, __m64 __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntq ((unsigned long long *)__p, (unsigned long long)__a);
-#else
   __builtin_ia32_movntq(__p, __a);
-#endif
 }
 
 /// Moves packed float values from a 128-bit vector of [4 x float] to a
@@ -2208,11 +2142,7 @@ _mm_stream_pi(__m64 *__p, __m64 __a)
 static __inline__ void __DEFAULT_FN_ATTRS
 _mm_stream_ps(float *__p, __m128 __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntps (__p, (__v4sf)__a);
-#else
   __builtin_nontemporal_store((__v4sf)__a, (__v4sf*)__p);
-#endif
 }
 
 #if defined(__cplusplus)
@@ -2697,11 +2627,7 @@ void _mm_setcsr(unsigned int __i);
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_unpackhi_ps(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_unpckhps ((__v4sf)__a, (__v4sf)__b);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__b, 2, 6, 3, 7);
-#endif
 }
 
 /// Unpacks the low-order (index 0,1) values from two 128-bit vectors of
@@ -2723,11 +2649,7 @@ _mm_unpackhi_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_unpacklo_ps(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_unpcklps ((__v4sf)__a, (__v4sf)__b);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__b, 0, 4, 1, 5);
-#endif
 }
 
 /// Constructs a 128-bit floating-point vector of [4 x float]. The lower
@@ -2771,11 +2693,7 @@ _mm_move_ss(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_movehl_ps(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movhlps ((__v4sf)__a, (__v4sf)__b);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__b, 6, 7, 2, 3);
-#endif
 }
 
 /// Constructs a 128-bit floating-point vector of [4 x float]. The lower
@@ -2796,11 +2714,7 @@ _mm_movehl_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_movelh_ps(__m128 __a, __m128 __b)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movlhps ((__v4sf)__a, (__v4sf)__b);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__b, 0, 1, 4, 5);
-#endif
 }
 
 /// Converts a 64-bit vector of [4 x i16] into a 128-bit vector of [4 x
@@ -3019,6 +2933,7 @@ _mm_movemask_ps(__m128 __a)
 
 #define _MM_ALIGN16 __attribute__((aligned(16)))
 
+#define _MM_SHUFFLE(z, y, x, w) (((z) << 6) | ((y) << 4) | ((x) << 2) | (w))
 
 #define _MM_EXCEPT_INVALID    (0x0001)
 #define _MM_EXCEPT_DENORM     (0x0002)
@@ -3086,42 +3001,12 @@ do { \
 #define _m_ _mm_
 #define _m_ _mm_
 
-/// Indicates that a spin loop is being executed for the purposes of
-///    optimizing power consumption during the loop.
-///
-/// \headerfile <x86intrin.h>
-///
-/// This intrinsic corresponds to the <c> PAUSE </c> instruction.
-///
-static inline void __DEFAULT_FN_ATTRS _mm_pause(void)
-{
-	__builtin_ia32_pause();
-}
-
 #undef __DEFAULT_FN_ATTRS
 #undef __DEFAULT_FN_ATTRS_MMX
 
-/* Set the control register to I.  */
-extern __inline void __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-_mm_setcsr (unsigned int __I)
-{
-  __builtin_ia32_ldmxcsr (__I);
-}
-
-/* Return the contents of the control register.  */
-extern __inline unsigned int __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-_mm_getcsr (void)
-{
-  return __builtin_ia32_stmxcsr ();
-}
-
 /* Ugly hack for backwards-compatibility (compatible with gcc) */
-#ifdef __GNUC__
-#include <emmintrin.h>
-#else
 #if defined(__SSE2__) && !__building_module(_Builtin_intrinsics)
 #include <emmintrin.h>
-#endif
 #endif
 
 #endif /* __XMMINTRIN_H */

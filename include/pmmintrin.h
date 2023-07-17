@@ -27,13 +27,8 @@
 #include <emmintrin.h>
 
 /* Define the default attributes for the functions in this file. */
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS \
-  __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS \
   __attribute__((__always_inline__, __nodebug__, __target__("sse3"), __min_vector_width__(128)))
-#endif
 
 /// Loads data from an unaligned memory location to elements in a 128-bit
 ///    vector.
@@ -139,11 +134,7 @@ _mm_hsub_ps(__m128 __a, __m128 __b)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_movehdup_ps(__m128 __a)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movshdup ((__v4sf)__a);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 1, 1, 3, 3);
-#endif
 }
 
 /// Duplicates even-indexed values from a 128-bit vector of
@@ -164,11 +155,7 @@ _mm_movehdup_ps(__m128 __a)
 static __inline__ __m128 __DEFAULT_FN_ATTRS
 _mm_moveldup_ps(__m128 __a)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_movsldup ((__v4sf)__a);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 0, 0, 2, 2);
-#endif
 }
 
 /// Adds the even-indexed values and subtracts the odd-indexed values of
@@ -269,11 +256,7 @@ _mm_hsub_pd(__m128d __a, __m128d __b)
 static __inline__ __m128d __DEFAULT_FN_ATTRS
 _mm_movedup_pd(__m128d __a)
 {
-#ifdef __GNUC__
-  return _mm_shuffle_pd (__a, __a, _MM_SHUFFLE2 (0,0));
-#else
   return __builtin_shufflevector((__v2df)__a, (__v2df)__a, 0, 0);
-#endif
 }
 
 /// Establishes a linear address memory range to be monitored and puts

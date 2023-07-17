@@ -27,11 +27,7 @@
 #include <tmmintrin.h>
 
 /* Define the default attributes for the functions in this file. */
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse4.1"), __min_vector_width__(128)))
-#endif
 
 /* SSE4 Rounding macros. */
 #define _MM_FROUND_TO_NEAREST_INT    0x00
@@ -662,11 +658,7 @@ _mm_mul_epi32 (__m128i __V1, __m128i __V2)
 static __inline__  __m128i __DEFAULT_FN_ATTRS
 _mm_stream_load_si128 (__m128i const *__V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_movntdqa ((__v2di *) __V);
-#else
   return (__m128i) __builtin_nontemporal_load ((const __v2di *) __V);
-#endif
 }
 
 /* SSE4 Packed Integer Min/Max Instructions.  */
@@ -1251,13 +1243,9 @@ _mm_cmpeq_epi64(__m128i __V1, __m128i __V2)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepi8_epi16(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxbw128 ((__v16qi)__V);
-#else
   /* This function always performs a signed extension, but __v16qi is a char
      which may be signed or unsigned, so use __v16qs. */
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qs)__V, (__v16qs)__V, 0, 1, 2, 3, 4, 5, 6, 7), __v8hi);
-#endif
 }
 
 /// Sign-extends each of the lower four 8-bit integer elements of a
@@ -1278,11 +1266,7 @@ _mm_cvtepi8_epi32(__m128i __V)
 {
   /* This function always performs a signed extension, but __v16qi is a char
      which may be signed or unsigned, so use __v16qs. */
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxbd128 ((__v16qi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qs)__V, (__v16qs)__V, 0, 1, 2, 3), __v4si);
-#endif
 }
 
 /// Sign-extends each of the lower two 8-bit integer elements of a
@@ -1301,13 +1285,9 @@ _mm_cvtepi8_epi32(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepi8_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxbq128 ((__v16qi)__V);
-#else
   /* This function always performs a signed extension, but __v16qi is a char
      which may be signed or unsigned, so use __v16qs. */
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qs)__V, (__v16qs)__V, 0, 1), __v2di);
-#endif
 }
 
 /// Sign-extends each of the lower four 16-bit integer elements of a
@@ -1326,11 +1306,7 @@ _mm_cvtepi8_epi64(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepi16_epi32(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxwd128 ((__v8hi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v8hi)__V, (__v8hi)__V, 0, 1, 2, 3), __v4si);
-#endif
 }
 
 /// Sign-extends each of the lower two 16-bit integer elements of a
@@ -1349,11 +1325,7 @@ _mm_cvtepi16_epi32(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepi16_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxwq128 ((__v8hi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v8hi)__V, (__v8hi)__V, 0, 1), __v2di);
-#endif
 }
 
 /// Sign-extends each of the lower two 32-bit integer elements of a
@@ -1372,11 +1344,7 @@ _mm_cvtepi16_epi64(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepi32_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovsxdq128 ((__v4si)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v4si)__V, (__v4si)__V, 0, 1), __v2di);
-#endif
 }
 
 /* SSE4 Packed Integer Zero-Extension.  */
@@ -1396,11 +1364,7 @@ _mm_cvtepi32_epi64(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu8_epi16(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxbw128 ((__v16qi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qu)__V, (__v16qu)__V, 0, 1, 2, 3, 4, 5, 6, 7), __v8hi);
-#endif
 }
 
 /// Zero-extends each of the lower four 8-bit integer elements of a
@@ -1419,11 +1383,7 @@ _mm_cvtepu8_epi16(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu8_epi32(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxbd128 ((__v16qi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qu)__V, (__v16qu)__V, 0, 1, 2, 3), __v4si);
-#endif
 }
 
 /// Zero-extends each of the lower two 8-bit integer elements of a
@@ -1442,11 +1402,7 @@ _mm_cvtepu8_epi32(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu8_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxbq128 ((__v16qi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v16qu)__V, (__v16qu)__V, 0, 1), __v2di);
-#endif
 }
 
 /// Zero-extends each of the lower four 16-bit integer elements of a
@@ -1465,11 +1421,7 @@ _mm_cvtepu8_epi64(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu16_epi32(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxwd128 ((__v8hi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v8hu)__V, (__v8hu)__V, 0, 1, 2, 3), __v4si);
-#endif
 }
 
 /// Zero-extends each of the lower two 16-bit integer elements of a
@@ -1488,11 +1440,7 @@ _mm_cvtepu16_epi32(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu16_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxwq128 ((__v8hi)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v8hu)__V, (__v8hu)__V, 0, 1), __v2di);
-#endif
 }
 
 /// Zero-extends each of the lower two 32-bit integer elements of a
@@ -1511,11 +1459,7 @@ _mm_cvtepu16_epi64(__m128i __V)
 static __inline__ __m128i __DEFAULT_FN_ATTRS
 _mm_cvtepu32_epi64(__m128i __V)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_pmovzxdq128 ((__v4si)__V);
-#else
   return (__m128i)__builtin_convertvector(__builtin_shufflevector((__v4su)__V, (__v4su)__V, 0, 1), __v2di);
-#endif
 }
 
 /* SSE4 Pack with Unsigned Saturation.  */
@@ -1612,11 +1556,7 @@ _mm_minpos_epu16(__m128i __V)
    so we'll do the same.  */
 
 #undef __DEFAULT_FN_ATTRS
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("sse4.2")))
-#endif
 
 /* These specify the type of data that we're comparing.  */
 #define _SIDD_UBYTE_OPS                 0x00

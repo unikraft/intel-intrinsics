@@ -24,24 +24,15 @@
 #ifndef __MMINTRIN_H
 #define __MMINTRIN_H
 
-#ifdef __GNUC__
-typedef int __m64 __attribute__ ((__vector_size__ (8), __may_alias__));
-#else
 typedef long long __m64 __attribute__((__vector_size__(8)));
-#endif
-typedef int __m64_u __attribute__ ((__vector_size__ (8), __may_alias__, __aligned__ (1)));
 
 typedef long long __v1di __attribute__((__vector_size__(8)));
 typedef int __v2si __attribute__((__vector_size__(8)));
 typedef short __v4hi __attribute__((__vector_size__(8)));
 typedef char __v8qi __attribute__((__vector_size__(8)));
-typedef float __v2sf __attribute__ ((__vector_size__ (8)));
+
 /* Define the default attributes for the functions in this file. */
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("mmx"), __min_vector_width__(64)))
-#endif
 
 /// Clears the MMX state by setting the state of the x87 stack registers
 ///    to empty.
@@ -50,12 +41,7 @@ typedef float __v2sf __attribute__ ((__vector_size__ (8)));
 ///
 /// This intrinsic corresponds to the <c> EMMS </c> instruction.
 ///
-static __inline__ void
-#ifdef __GNUC__
-__attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
-__attribute__((__always_inline__, __nodebug__, __target__("mmx")))
-#endif
+static __inline__ void  __attribute__((__always_inline__, __nodebug__, __target__("mmx")))
 _mm_empty(void)
 {
     __builtin_ia32_emms();
@@ -757,11 +743,7 @@ _mm_mullo_pi16(__m64 __m1, __m64 __m2)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_sll_pi16(__m64 __m, __m64 __count)
 {
-#ifdef __GNUC__
-    return (__m64) __builtin_ia32_psllw ((__v4hi)__m, (__v4hi)__count);
-#else
     return (__m64)__builtin_ia32_psllw((__v4hi)__m, __count);
-#endif
 }
 
 /// Left-shifts each 16-bit signed integer element of a 64-bit integer
@@ -806,7 +788,7 @@ _mm_slli_pi16(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_sll_pi32(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_pslld((__v2si)__m, (__v2si)__count);
+    return (__m64)__builtin_ia32_pslld((__v2si)__m, __count);
 }
 
 /// Left-shifts each 32-bit signed integer element of a 64-bit integer
@@ -848,7 +830,7 @@ _mm_slli_pi32(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_sll_si64(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psllq((__v1di)__m, (__v1di)__count);
+    return (__m64)__builtin_ia32_psllq((__v1di)__m, __count);
 }
 
 /// Left-shifts the first parameter, which is a 64-bit integer, by the
@@ -892,7 +874,7 @@ _mm_slli_si64(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_sra_pi16(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psraw((__v4hi)__m, (__v4hi)__count);
+    return (__m64)__builtin_ia32_psraw((__v4hi)__m, __count);
 }
 
 /// Right-shifts each 16-bit integer element of a 64-bit integer vector
@@ -939,7 +921,7 @@ _mm_srai_pi16(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_sra_pi32(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psrad((__v2si)__m, (__v2si)__count);
+    return (__m64)__builtin_ia32_psrad((__v2si)__m, __count);
 }
 
 /// Right-shifts each 32-bit integer element of a 64-bit integer vector
@@ -985,7 +967,7 @@ _mm_srai_pi32(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_srl_pi16(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psrlw((__v4hi)__m, (__v4hi)__count);
+    return (__m64)__builtin_ia32_psrlw((__v4hi)__m, __count);
 }
 
 /// Right-shifts each 16-bit integer element of a 64-bit integer vector
@@ -1030,7 +1012,7 @@ _mm_srli_pi16(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_srl_pi32(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psrld((__v2si)__m, (__v2si)__count);
+    return (__m64)__builtin_ia32_psrld((__v2si)__m, __count);
 }
 
 /// Right-shifts each 32-bit integer element of a 64-bit integer vector
@@ -1072,7 +1054,7 @@ _mm_srli_pi32(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_srl_si64(__m64 __m, __m64 __count)
 {
-    return (__m64)__builtin_ia32_psrlq((__v1di)__m, (__v1di)__count);
+    return (__m64)__builtin_ia32_psrlq((__v1di)__m, __count);
 }
 
 /// Right-shifts the first parameter, which is a 64-bit integer, by the
@@ -1111,7 +1093,7 @@ _mm_srli_si64(__m64 __m, int __count)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_and_si64(__m64 __m1, __m64 __m2)
 {
-    return __builtin_ia32_pand(__m1, __m2);
+    return __builtin_ia32_pand((__v1di)__m1, (__v1di)__m2);
 }
 
 /// Performs a bitwise NOT of the first 64-bit integer vector, and then
@@ -1132,11 +1114,7 @@ _mm_and_si64(__m64 __m1, __m64 __m2)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_andnot_si64(__m64 __m1, __m64 __m2)
 {
-#ifdef __GNUC__
-    return __builtin_ia32_pandn (__m1, __m2);
-#else
     return __builtin_ia32_pandn((__v1di)__m1, (__v1di)__m2);
-#endif
 }
 
 /// Performs a bitwise OR of two 64-bit integer vectors.
@@ -1154,11 +1132,7 @@ _mm_andnot_si64(__m64 __m1, __m64 __m2)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_or_si64(__m64 __m1, __m64 __m2)
 {
-#ifdef __GNUC__
-    return __builtin_ia32_por(__m1, __m2);
-#else
     return __builtin_ia32_por((__v1di)__m1, (__v1di)__m2);
-#endif
 }
 
 /// Performs a bitwise exclusive OR of two 64-bit integer vectors.
@@ -1176,7 +1150,7 @@ _mm_or_si64(__m64 __m1, __m64 __m2)
 static __inline__ __m64 __DEFAULT_FN_ATTRS
 _mm_xor_si64(__m64 __m1, __m64 __m2)
 {
-    return __builtin_ia32_pxor (__m1, __m2);
+    return __builtin_ia32_pxor((__v1di)__m1, (__v1di)__m2);
 }
 
 /// Compares the 8-bit integer elements of two 64-bit integer vectors of

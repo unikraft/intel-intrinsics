@@ -50,13 +50,8 @@ typedef double __m256d __attribute__((__vector_size__(32)));
 typedef long long __m256i __attribute__((__vector_size__(32)));
 
 /* Define the default attributes for the functions in this file. */
-#ifdef  __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#define __DEFAULT_FN_ATTRS128 __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("avx"), __min_vector_width__(256)))
 #define __DEFAULT_FN_ATTRS128 __attribute__((__always_inline__, __nodebug__, __target__("avx"), __min_vector_width__(128)))
-#endif
 
 /* Arithmetic */
 /// Adds two 256-bit vectors of [4 x double].
@@ -2035,17 +2030,8 @@ _mm256_blendv_ps(__m256 __a, __m256 __b, __m256 __c)
 ///    element is extracted and returned.
 /// \returns A 64-bit integer containing the extracted 64 bits of extended
 ///    packed data.
-#ifdef __clang__
 #define _mm256_extract_epi64(X, N) \
   (long long)__builtin_ia32_vec_ext_v4di((__v4di)(__m256i)(X), (int)(N))
-#else
-#define _mm256_extract_epi64(X, N)					\
-	  (__extension__							\
-	      ({									\
-	             __m128i __Y = _mm256_extractf128_si256 ((X), (N) >> 1);		\
-		           _mm_extract_epi64 (__Y, (N) % 2);					\
-			       }))
-#endif
 #endif
 
 /// Takes a [8 x i32] vector and replaces the vector element value
@@ -2152,11 +2138,7 @@ _mm256_blendv_ps(__m256 __a, __m256 __b, __m256 __c)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_cvtepi32_pd(__m128i __a)
 {
-#ifdef __GNUC__
-  return (__m256d)__builtin_ia32_cvtdq2pd256 ((__v4si) __a);
-#else
   return (__m256d)__builtin_convertvector((__v4si)__a, __v4df);
-#endif
 }
 
 /// Converts a vector of [8 x i32] into a vector of [8 x float].
@@ -2171,11 +2153,7 @@ _mm256_cvtepi32_pd(__m128i __a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_cvtepi32_ps(__m256i __a)
 {
-#ifdef __GNUC__
-  return (__m256)__builtin_ia32_cvtdq2ps256 ((__v8si) __a);
-#else
   return (__m256)__builtin_convertvector((__v8si)__a, __v8sf);
-#endif
 }
 
 /// Converts a 256-bit vector of [4 x double] into a 128-bit vector of
@@ -2222,11 +2200,7 @@ _mm256_cvtps_epi32(__m256 __a)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_cvtps_pd(__m128 __a)
 {
-#ifdef __GNUC__
-  return (__m256d)__builtin_ia32_cvtps2pd256 ((__v4sf) __a);
-#else
   return (__m256d)__builtin_convertvector((__v4sf)__a, __v4df);
-#endif
 }
 
 /// Converts a 256-bit vector of [4 x double] into a 128-bit vector of [4
@@ -2351,11 +2325,7 @@ _mm256_cvtss_f32(__m256 __a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_movehdup_ps(__m256 __a)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_movshdup256 ((__v8sf)__a);
-#else
   return __builtin_shufflevector((__v8sf)__a, (__v8sf)__a, 1, 1, 3, 3, 5, 5, 7, 7);
-#endif
 }
 
 /// Moves and duplicates even-indexed values from a 256-bit vector of
@@ -2380,11 +2350,7 @@ _mm256_movehdup_ps(__m256 __a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_moveldup_ps(__m256 __a)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_movsldup256 ((__v8sf)__a);
-#else
   return __builtin_shufflevector((__v8sf)__a, (__v8sf)__a, 0, 0, 2, 2, 4, 4, 6, 6);
-#endif
 }
 
 /// Moves and duplicates double-precision floating point values from a
@@ -2406,11 +2372,7 @@ _mm256_moveldup_ps(__m256 __a)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_movedup_pd(__m256d __a)
 {
-#ifdef __GNUC__
-  return (__m256d) __builtin_ia32_unpckhpd256 ((__v4df)__a, (__v4df)__a);
-#else
   return __builtin_shufflevector((__v4df)__a, (__v4df)__a, 0, 0, 2, 2);
-#endif
 }
 
 /* Unpack and Interleave */
@@ -2433,11 +2395,7 @@ _mm256_movedup_pd(__m256d __a)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_unpackhi_pd(__m256d __a, __m256d __b)
 {
-#ifdef __GNUC__
-  return (__m256d) __builtin_ia32_unpckhpd256 ((__v4df)__a, (__v4df)__b);
-#else
   return __builtin_shufflevector((__v4df)__a, (__v4df)__b, 1, 5, 1+2, 5+2);
-#endif
 }
 
 /// Unpacks the even-indexed vector elements from two 256-bit vectors of
@@ -2459,11 +2417,7 @@ _mm256_unpackhi_pd(__m256d __a, __m256d __b)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_unpacklo_pd(__m256d __a, __m256d __b)
 {
-#ifdef __GNUC__
-  return (__m256d) __builtin_ia32_unpcklpd256 ((__v4df)__a, (__v4df)__b);
-#else
   return __builtin_shufflevector((__v4df)__a, (__v4df)__b, 0, 4, 0+2, 4+2);
-#endif
 }
 
 /// Unpacks the 32-bit vector elements 2, 3, 6 and 7 from each of the
@@ -2490,11 +2444,7 @@ _mm256_unpacklo_pd(__m256d __a, __m256d __b)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_unpackhi_ps(__m256 __a, __m256 __b)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_unpckhps256 ((__v8sf)__a, (__v8sf)__b);
-#else
   return __builtin_shufflevector((__v8sf)__a, (__v8sf)__b, 2, 10, 2+1, 10+1, 6, 14, 6+1, 14+1);
-#endif
 }
 
 /// Unpacks the 32-bit vector elements 0, 1, 4 and 5 from each of the
@@ -2521,11 +2471,7 @@ _mm256_unpackhi_ps(__m256 __a, __m256 __b)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_unpacklo_ps(__m256 __a, __m256 __b)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_unpcklps256 ((__v8sf)__a, (__v8sf)__b);
-#else
   return __builtin_shufflevector((__v8sf)__a, (__v8sf)__b, 0, 8, 0+1, 8+1, 4, 12, 4+1, 12+1);
-#endif
 }
 
 /* Bit Test */
@@ -3003,11 +2949,7 @@ _mm256_movemask_ps(__m256 __a)
 /// \headerfile <x86intrin.h>
 ///
 /// This intrinsic corresponds to the <c> VZEROALL </c> instruction.
-#ifdef __GNUC__
-static __inline void __DEFAULT_FN_ATTRS
-#else
 static __inline void __attribute__((__always_inline__, __nodebug__, __target__("avx")))
-#endif
 _mm256_zeroall(void)
 {
   __builtin_ia32_vzeroall();
@@ -3018,12 +2960,7 @@ _mm256_zeroall(void)
 /// \headerfile <x86intrin.h>
 ///
 /// This intrinsic corresponds to the <c> VZEROUPPER </c> instruction.
-//
-#ifdef __GNUC__
-static __inline void __DEFAULT_FN_ATTRS
-#else
 static __inline void __attribute__((__always_inline__, __nodebug__, __target__("avx")))
-#endif
 _mm256_zeroupper(void)
 {
   __builtin_ia32_vzeroupper();
@@ -3102,13 +3039,9 @@ _mm256_broadcast_ss(float const *__a)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_broadcast_pd(__m128d const *__a)
 {
-#ifdef __GNUC__
-  return (__m256d) __builtin_ia32_vbroadcastf128_pd256 (__a);
-#else
   __m128d __b = _mm_loadu_pd((const double *)__a);
   return (__m256d)__builtin_shufflevector((__v2df)__b, (__v2df)__b,
                                           0, 1, 0, 1);
-#endif
 }
 
 /// Loads the data from a 128-bit vector of [4 x float] from the
@@ -3126,13 +3059,9 @@ _mm256_broadcast_pd(__m128d const *__a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_broadcast_ps(__m128 const *__a)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_vbroadcastf128_ps256 (__a);
-#else
   __m128 __b = _mm_loadu_ps((const float *)__a);
   return (__m256)__builtin_shufflevector((__v4sf)__b, (__v4sf)__b,
                                          0, 1, 2, 3, 0, 1, 2, 3);
-#endif
 }
 
 /* SIMD load ops */
@@ -3592,12 +3521,8 @@ _mm_maskstore_ps(float *__p, __m128i __m, __m128 __a)
 static __inline void __DEFAULT_FN_ATTRS
 _mm256_stream_si256(__m256i *__a, __m256i __b)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntdq256 ((__v4di *)__a, (__v4di)__b);
-#else
   typedef __v4di __v4di_aligned __attribute__((aligned(32)));
   __builtin_nontemporal_store((__v4di_aligned)__b, (__v4di_aligned*)__a);
-#endif
 }
 
 /// Moves double-precision values from a 256-bit vector of [4 x double]
@@ -3616,12 +3541,8 @@ _mm256_stream_si256(__m256i *__a, __m256i __b)
 static __inline void __DEFAULT_FN_ATTRS
 _mm256_stream_pd(double *__a, __m256d __b)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntpd256 (__a, (__v4df)__b);
-#else
   typedef __v4df __v4df_aligned __attribute__((aligned(32)));
   __builtin_nontemporal_store((__v4df_aligned)__b, (__v4df_aligned*)__a);
-#endif
 }
 
 /// Moves single-precision floating point values from a 256-bit vector
@@ -3641,12 +3562,8 @@ _mm256_stream_pd(double *__a, __m256d __b)
 static __inline void __DEFAULT_FN_ATTRS
 _mm256_stream_ps(float *__p, __m256 __a)
 {
-#ifdef __GNUC__
-  __builtin_ia32_movntps256 (__p, (__v8sf)__a);
-#else
   typedef __v8sf __v8sf_aligned __attribute__((aligned(32)));
   __builtin_nontemporal_store((__v8sf_aligned)__a, (__v8sf_aligned*)__p);
-#endif
 }
 
 /* Create vectors */
@@ -3660,12 +3577,7 @@ _mm256_stream_ps(float *__p, __m256 __a)
 static __inline__ __m256d __DEFAULT_FN_ATTRS
 _mm256_undefined_pd(void)
 {
-#ifdef __GNUC__
-  __m256d __X = __X;
-  return __X;
-#else
   return (__m256d)__builtin_ia32_undef256();
-#endif
 }
 
 /// Create a 256-bit vector of [8 x float] with undefined values.
@@ -3678,12 +3590,7 @@ _mm256_undefined_pd(void)
 static __inline__ __m256 __DEFAULT_FN_ATTRS
 _mm256_undefined_ps(void)
 {
-#ifdef __GNUC__
-  __m256 __X = __X;
-  return __X;
-#else
   return (__m256)__builtin_ia32_undef256();
-#endif
 }
 
 /// Create a 256-bit integer vector with undefined values.
@@ -3696,12 +3603,7 @@ _mm256_undefined_ps(void)
 static __inline__ __m256i __DEFAULT_FN_ATTRS
 _mm256_undefined_si256(void)
 {
-#ifdef __GNUC__
-  __m256i __X = __X;
-  return __X;
-#else
   return (__m256i)__builtin_ia32_undef256();
-#endif
 }
 
 /// Constructs a 256-bit floating-point vector of [4 x double]
@@ -4508,11 +4410,7 @@ _mm256_castsi256_pd(__m256i __a)
 static __inline __m128d __DEFAULT_FN_ATTRS
 _mm256_castpd256_pd128(__m256d __a)
 {
-#ifdef __GNUC__
-  return (__m128d) __builtin_ia32_pd_pd256 ((__v4df)__a);
-#else
   return __builtin_shufflevector((__v4df)__a, (__v4df)__a, 0, 1);
-#endif
 }
 
 /// Returns the lower 128 bits of a 256-bit floating-point vector of
@@ -4529,11 +4427,7 @@ _mm256_castpd256_pd128(__m256d __a)
 static __inline __m128 __DEFAULT_FN_ATTRS
 _mm256_castps256_ps128(__m256 __a)
 {
-#ifdef __GNUC__
-  return (__m128) __builtin_ia32_ps_ps256 ((__v8sf)__a);
-#else
   return __builtin_shufflevector((__v8sf)__a, (__v8sf)__a, 0, 1, 2, 3);
-#endif
 }
 
 /// Truncates a 256-bit integer vector into a 128-bit integer vector.
@@ -4549,11 +4443,7 @@ _mm256_castps256_ps128(__m256 __a)
 static __inline __m128i __DEFAULT_FN_ATTRS
 _mm256_castsi256_si128(__m256i __a)
 {
-#ifdef __GNUC__
-  return (__m128i) __builtin_ia32_si_si256 ((__v8si)__a);
-#else
   return __builtin_shufflevector((__v4di)__a, (__v4di)__a, 0, 1);
-#endif
 }
 
 /// Constructs a 256-bit floating-point vector of [4 x double] from a
@@ -4574,11 +4464,7 @@ _mm256_castsi256_si128(__m256i __a)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_castpd128_pd256(__m128d __a)
 {
-#ifdef __GNUC__
-  return (__m256d) __builtin_ia32_pd256_pd ((__v2df)__a);
-#else
   return __builtin_shufflevector((__v2df)__a, (__v2df)__a, 0, 1, -1, -1);
-#endif
 }
 
 /// Constructs a 256-bit floating-point vector of [8 x float] from a
@@ -4599,11 +4485,7 @@ _mm256_castpd128_pd256(__m128d __a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_castps128_ps256(__m128 __a)
 {
-#ifdef __GNUC__
-  return (__m256) __builtin_ia32_ps256_ps ((__v4sf)__a);
-#else
   return __builtin_shufflevector((__v4sf)__a, (__v4sf)__a, 0, 1, 2, 3, -1, -1, -1, -1);
-#endif
 }
 
 /// Constructs a 256-bit integer vector from a 128-bit integer vector.
@@ -4622,11 +4504,62 @@ _mm256_castps128_ps256(__m128 __a)
 static __inline __m256i __DEFAULT_FN_ATTRS
 _mm256_castsi128_si256(__m128i __a)
 {
-#ifdef __GNUC__
-  return (__m256i) __builtin_ia32_si256_si ((__v4si)__a);
-#else
   return __builtin_shufflevector((__v2di)__a, (__v2di)__a, 0, 1, -1, -1);
-#endif
+}
+
+/// Constructs a 256-bit floating-point vector of [4 x double] from a
+///    128-bit floating-point vector of [2 x double]. The lower 128 bits
+///    contain the value of the source vector. The upper 128 bits are set
+///    to zero.
+///
+/// \headerfile <x86intrin.h>
+///
+/// This intrinsic has no corresponding instruction.
+///
+/// \param __a
+///    A 128-bit vector of [2 x double].
+/// \returns A 256-bit floating-point vector of [4 x double]. The lower 128 bits
+///    contain the value of the parameter. The upper 128 bits are set to zero.
+static __inline __m256d __DEFAULT_FN_ATTRS
+_mm256_zextpd128_pd256(__m128d __a)
+{
+  return __builtin_shufflevector((__v2df)__a, (__v2df)_mm_setzero_pd(), 0, 1, 2, 3);
+}
+
+/// Constructs a 256-bit floating-point vector of [8 x float] from a
+///    128-bit floating-point vector of [4 x float]. The lower 128 bits contain
+///    the value of the source vector. The upper 128 bits are set to zero.
+///
+/// \headerfile <x86intrin.h>
+///
+/// This intrinsic has no corresponding instruction.
+///
+/// \param __a
+///    A 128-bit vector of [4 x float].
+/// \returns A 256-bit floating-point vector of [8 x float]. The lower 128 bits
+///    contain the value of the parameter. The upper 128 bits are set to zero.
+static __inline __m256 __DEFAULT_FN_ATTRS
+_mm256_zextps128_ps256(__m128 __a)
+{
+  return __builtin_shufflevector((__v4sf)__a, (__v4sf)_mm_setzero_ps(), 0, 1, 2, 3, 4, 5, 6, 7);
+}
+
+/// Constructs a 256-bit integer vector from a 128-bit integer vector.
+///    The lower 128 bits contain the value of the source vector. The upper
+///    128 bits are set to zero.
+///
+/// \headerfile <x86intrin.h>
+///
+/// This intrinsic has no corresponding instruction.
+///
+/// \param __a
+///    A 128-bit integer vector.
+/// \returns A 256-bit integer vector. The lower 128 bits contain the value of
+///    the parameter. The upper 128 bits are set to zero.
+static __inline __m256i __DEFAULT_FN_ATTRS
+_mm256_zextsi128_si256(__m128i __a)
+{
+  return __builtin_shufflevector((__v2di)__a, (__v2di)_mm_setzero_si128(), 0, 1, 2, 3);
 }
 
 /*
@@ -5013,11 +4946,7 @@ _mm256_storeu2_m128i(__m128i *__addr_hi, __m128i *__addr_lo, __m256i __a)
 static __inline __m256 __DEFAULT_FN_ATTRS
 _mm256_set_m128 (__m128 __hi, __m128 __lo)
 {
-#ifdef __GNUC__
-  return _mm256_insertf128_ps (_mm256_castps128_ps256 (__lo), __hi, 1);
-#else
   return (__m256) __builtin_shufflevector((__v4sf)__lo, (__v4sf)__hi, 0, 1, 2, 3, 4, 5, 6, 7);
-#endif
 }
 
 /// Constructs a 256-bit floating-point vector of [4 x double] by
@@ -5038,11 +4967,7 @@ _mm256_set_m128 (__m128 __hi, __m128 __lo)
 static __inline __m256d __DEFAULT_FN_ATTRS
 _mm256_set_m128d (__m128d __hi, __m128d __lo)
 {
-#ifdef __GNUC__
-  return (__m256d) _mm256_insertf128_pd (_mm256_castpd128_pd256 (__lo), __hi, 1);
-#else
   return (__m256d) __builtin_shufflevector((__v2df)__lo, (__v2df)__hi, 0, 1, 2, 3);
-#endif
 }
 
 /// Constructs a 256-bit integer vector by concatenating two 128-bit
@@ -5062,11 +4987,7 @@ _mm256_set_m128d (__m128d __hi, __m128d __lo)
 static __inline __m256i __DEFAULT_FN_ATTRS
 _mm256_set_m128i (__m128i __hi, __m128i __lo)
 {
-#ifdef __GNUC__
-  return (__m256i) _mm256_insertf128_si256 (_mm256_castsi128_si256 (__lo), __hi, 1);
-#else
   return (__m256i) __builtin_shufflevector((__v2di)__lo, (__v2di)__hi, 0, 1, 2, 3);
-#endif
 }
 
 /// Constructs a 256-bit floating-point vector of [8 x float] by

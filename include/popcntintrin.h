@@ -25,11 +25,7 @@
 #define __POPCNTINTRIN_H
 
 /* Define the default attributes for the functions in this file. */
-#ifdef __GNUC__
-#define __DEFAULT_FN_ATTRS __attribute__((__gnu_inline__, __always_inline__, __artificial__))
-#else
 #define __DEFAULT_FN_ATTRS __attribute__((__always_inline__, __nodebug__, __target__("popcnt")))
-#endif
 
 /// Counts the number of bits in the source operand having a value of 1.
 ///
