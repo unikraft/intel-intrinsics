@@ -239,6 +239,7 @@ _tile_loadd_internal(unsigned short m, unsigned short n, const void *base,
                                              (__SIZE_TYPE__)(stride));
 }
 
+#if (__clang_major__ >= 13)
 /// This is internal intrinsic. C/C++ user should avoid calling it directly.
 static __inline__ _tile1024i __DEFAULT_FN_ATTRS_INT8
 _tile_loaddt1_internal(unsigned short m, unsigned short n, const void *base,
@@ -246,6 +247,7 @@ _tile_loaddt1_internal(unsigned short m, unsigned short n, const void *base,
   return __builtin_ia32_tileloaddt164_internal(m, n, base,
                                                (__SIZE_TYPE__)(stride));
 }
+#endif
 
 /// This is internal intrinsic. C/C++ user should avoid calling it directly.
 static __inline__ _tile1024i __DEFAULT_FN_ATTRS_INT8
@@ -253,7 +255,7 @@ _tile_dpbssd_internal(unsigned short m, unsigned short n, unsigned short k,
                       _tile1024i dst, _tile1024i src1, _tile1024i src2) {
   return __builtin_ia32_tdpbssd_internal(m, n, k, dst, src1, src2);
 }
-
+#if (__clang_major__ >= 13)
 /// This is internal intrinsic. C/C++ user should avoid calling it directly.
 static __inline__ _tile1024i __DEFAULT_FN_ATTRS_INT8
 _tile_dpbsud_internal(unsigned short m, unsigned short n, unsigned short k,
@@ -274,6 +276,7 @@ _tile_dpbuud_internal(unsigned short m, unsigned short n, unsigned short k,
                       _tile1024i dst, _tile1024i src1, _tile1024i src2) {
   return __builtin_ia32_tdpbuud_internal(m, n, k, dst, src1, src2);
 }
+#endif
 
 /// This is internal intrinsic. C/C++ user should avoid calling it directly.
 static __inline__ void __DEFAULT_FN_ATTRS_INT8
@@ -283,12 +286,14 @@ _tile_stored_internal(unsigned short m, unsigned short n, void *base,
                                               (__SIZE_TYPE__)(stride), tile);
 }
 
+#if (__clang_major__ >= 13)
 /// This is internal intrinsic. C/C++ user should avoid calling it directly.
 static __inline__ _tile1024i __DEFAULT_FN_ATTRS_BF16
 _tile_dpbf16ps_internal(unsigned short m, unsigned short n, unsigned short k,
                         _tile1024i dst, _tile1024i src1, _tile1024i src2) {
   return __builtin_ia32_tdpbf16ps_internal(m, n, k, dst, src1, src2);
 }
+#endif
 
 /// This struct pack the shape and tile data together for user. We suggest
 /// initializing the struct as early as possible, because compiler depends
@@ -319,6 +324,7 @@ static __inline__ void __tile_loadd(__tile1024i *dst, const void *base,
   dst->tile = _tile_loadd_internal(dst->row, dst->col, base, stride);
 }
 
+#if (__clang_major__ >= 13)
 /// Load tile rows from memory specifieid by "base" address and "stride" into
 /// destination tile "dst". This intrinsic provides a hint to the implementation
 /// that the data will likely not be reused in the near future and the data
@@ -339,6 +345,7 @@ static __inline__ void __tile_stream_loadd(__tile1024i *dst, const void *base,
                                            __SIZE_TYPE__ stride) {
   dst->tile = _tile_loaddt1_internal(dst->row, dst->col, base, stride);
 }
+#endif
 
 /// Compute dot-product of bytes in tiles with a source/destination accumulator.
 /// Multiply groups of 4 adjacent pairs of signed 8-bit integers in src0 with
@@ -363,6 +370,7 @@ static __inline__ void __tile_dpbssd(__tile1024i *dst, __tile1024i src0,
                                     src0.tile, src1.tile);
 }
 
+#if (__clang_major__ >= 13)
 /// Compute dot-product of bytes in tiles with a source/destination accumulator.
 /// Multiply groups of 4 adjacent pairs of signed 8-bit integers in src0 with
 /// corresponding unsigned 8-bit integers in src1, producing 4 intermediate
@@ -431,6 +439,7 @@ static __inline__ void __tile_dpbuud(__tile1024i *dst, __tile1024i src0,
   dst->tile = _tile_dpbuud_internal(src0.row, src1.col, src0.col, dst->tile,
                                     src0.tile, src1.tile);
 }
+#endif
 
 /// Store the tile specified by "src" to memory specifieid by "base" address and
 /// "stride".
@@ -464,6 +473,7 @@ static __inline__ void __tile_zero(__tile1024i *dst) {
   dst->tile = __builtin_ia32_tilezero_internal(dst->row, dst->col);
 }
 
+#if (__clang_major__ >= 13)
 /// Compute dot-product of BF16 (16-bit) floating-point pairs in tiles src0 and
 /// src1, accumulating the intermediate single-precision (32-bit) floating-point
 /// elements with elements in "dst", and store the 32-bit result back to tile
@@ -485,6 +495,7 @@ static __inline__ void __tile_dpbf16ps(__tile1024i *dst, __tile1024i src0,
   dst->tile = _tile_dpbf16ps_internal(src0.row, src1.col, src0.col, dst->tile,
                                       src0.tile, src1.tile);
 }
+#endif
 
 #undef __DEFAULT_FN_ATTRS_TILE
 #undef __DEFAULT_FN_ATTRS_INT8
