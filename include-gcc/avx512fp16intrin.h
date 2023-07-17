@@ -183,21 +183,33 @@ extern __inline __m128h
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 _mm_setzero_ph (void)
 {
+#if (__GNUC__ < 13)
+  return _mm_set1_ph (0.0f);
+#else
   return _mm_set1_ph (0.0f16);
+#endif
 }
 
 extern __inline __m256h
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 _mm256_setzero_ph (void)
 {
+#if (__GNUC__ < 13)
+  return _mm256_set1_ph (0.0f);
+#else
   return _mm256_set1_ph (0.0f16);
+#endif
 }
 
 extern __inline __m512h
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 _mm512_setzero_ph (void)
 {
+#if (__GNUC__ < 13)
+  return _mm512_set1_ph (0.0f);
+#else
   return _mm512_set1_ph (0.0f16);
+#endif
 }
 
 extern __inline __m128h
@@ -367,8 +379,12 @@ extern __inline __m128h
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 _mm_set_sh (_Float16 __F)
 {
+#if (__GNUC__ < 13)
+  return _mm_set_ph (0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, __F);
+#else
   return _mm_set_ph (0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16,
 		     __F);
+#endif
 }
 
 /* Create a vector with element 0 as *P and the rest zero.  */
@@ -376,8 +392,13 @@ extern __inline __m128h
 __attribute__ ((__gnu_inline__, __always_inline__, __artificial__))
 _mm_load_sh (void const *__P)
 {
+#if (__GNUC__ < 13)
+  return _mm_set_ph (0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+		     *(_Float16 const *) __P);
+#else
   return _mm_set_ph (0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16, 0.0f16,
 		     *(_Float16 const *) __P);
+#endif
 }
 
 extern __inline __m512h

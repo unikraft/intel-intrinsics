@@ -53,12 +53,21 @@ enum _mm_hint
 extern __inline void __attribute__((__gnu_inline__, __always_inline__, __artificial__))
 _mm_prefetch (const void *__P, enum _mm_hint __I)
 {
+#if (__GNUC__ < 13)
+  __builtin_prefetch (__P, (__I & 0x4) >> 2, __I & 0x3);
+#else
   __builtin_ia32_prefetch (__P, (__I & 0x4) >> 2,
 			   __I & 0x3, (__I & 0x10) >> 4);
+#endif
 }
+#else
+#if (__GNUC__ < 13)
+#define _mm_prefetch(P, I) \
+  __builtin_prefetch ((P), ((I & 0x4) >> 2), (I & 0x3))
 #else
 #define _mm_prefetch(P, I) \
   __builtin_ia32_prefetch ((P), ((I) & 0x4) >> 2, ((I) & 0x3), ((I) & 0x10) >> 4)
+#endif
 #endif
 
 #ifndef __SSE__

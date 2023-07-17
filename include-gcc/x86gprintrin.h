@@ -52,7 +52,9 @@
 
 #include <clzerointrin.h>
 
+#if (__GNUC__ >= 13)
 #include <cmpccxaddintrin.h>
+#endif
 
 #include <enqcmdintrin.h>
 
@@ -74,9 +76,11 @@
 
 #include <pkuintrin.h>
 
+#if (__GNUC__ >= 13)
 #include <prfchiintrin.h>
 
 #include <raointintrin.h>
+#endif
 
 #include <rdseedintrin.h>
 
