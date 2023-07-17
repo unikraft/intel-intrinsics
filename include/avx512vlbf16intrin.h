@@ -13,7 +13,9 @@
 #ifndef __AVX512VLBF16INTRIN_H
 #define __AVX512VLBF16INTRIN_H
 
+#if (__clang_major__ <= 15)
 typedef short __m128bh __attribute__((__vector_size__(16), __aligned__(16)));
+#endif
 
 #define __DEFAULT_FN_ATTRS128 \
   __attribute__((__always_inline__, __nodebug__, \
@@ -415,9 +417,15 @@ _mm256_maskz_dpbf16_ps(__mmask8 __U, __m256 __D, __m256bh __A, __m256bh __B) {
 ///    and fraction field is truncated to 7 bits.
 static __inline__ __bfloat16 __DEFAULT_FN_ATTRS128 _mm_cvtness_sbh(float __A) {
   __v4sf __V = {__A, 0, 0, 0};
+#if (__clang_major__ > 15)
+  __v8bf __R = __builtin_ia32_cvtneps2bf16_128_mask(
+      (__v4sf)__V, (__v8bf)_mm_undefined_si128(), (__mmask8)-1);
+  return (__bf16)__R[0];
+#else
   __v8hi __R = __builtin_ia32_cvtneps2bf16_128_mask(
       (__v4sf)__V, (__v8hi)_mm_undefined_si128(), (__mmask8)-1);
   return __R[0];
+#endif
 }
 
 /// Convert Packed BF16 Data to Packed float Data.
