@@ -14,7 +14,9 @@
 #error "This header is only meant to be used on x86 and x64 architecture"
 #endif
 
+#if (__clang_major__ >= 12)
 #include <x86gprintrin.h>
+#endif
 
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__MMX__)
@@ -144,9 +146,11 @@
 #include <avx512vlvnniintrin.h>
 #endif
 
+#if (__clang_major__ >= 12)
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__AVXVNNI__)
 #include <avxvnniintrin.h>
+#endif
 #endif
 
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
@@ -214,6 +218,7 @@
 #include <avx512pfintrin.h>
 #endif
 
+#if (__clang_major__ >= 12)
 /*
  * FIXME: _Float16 type is legal only when HW support float16 operation.
  * We use __AVX512FP16__ to identify if float16 is supported or not, so
@@ -226,6 +231,7 @@
 
 #if defined(__AVX512FP16__) && defined(__AVX512VL__)
 #include <avx512vlfp16intrin.h>
+#endif
 #endif
 
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
@@ -496,9 +502,11 @@ _storebe_i64(void * __P, long long __D) {
 #include <invpcidintrin.h>
 #endif
 
+#if (__clang_major__ >= 12)
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__KL__) || defined(__WIDEKL__)
 #include <keylockerintrin.h>
+#endif
 #endif
 
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \

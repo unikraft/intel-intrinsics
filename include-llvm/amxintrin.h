@@ -226,6 +226,7 @@ static __inline__ void __DEFAULT_FN_ATTRS_TILE _tile_release(void) {
 #define _tile_dpbf16ps(dst, src0, src1)                                        \
   __builtin_ia32_tdpbf16ps((dst), (src0), (src1))
 
+#if (__clang_major__ >= 12)
 /// AMX tile register size can be configured, the maximum size is 16x64=1024
 /// bytes. Since there is no 2D type in llvm IR, we use vector type to
 /// represent 2D tile and the fixed size is maximum amx tile register size.
@@ -495,6 +496,7 @@ static __inline__ void __tile_dpbf16ps(__tile1024i *dst, __tile1024i src0,
   dst->tile = _tile_dpbf16ps_internal(src0.row, src1.col, src0.col, dst->tile,
                                       src0.tile, src1.tile);
 }
+#endif
 #endif
 
 #undef __DEFAULT_FN_ATTRS_TILE
