@@ -1,8 +1,10 @@
 #  libintel_intrinsics Makefile.uk
 #
 #  Authors: Vlad-Andrei Badoiu <vlad_andrei.badoiu@stud.acs.upb.ro>
+#           Andrei Tatar <andrei@unikraft.io>
 #
 #  Copyright (c) 2019, University Politehnica of Bucharest. All rights reserved.
+#  Copyright (c) 2023, Unikraft GmbH and The Unikraft Authors.
 #
 #  Redistribution and use in source and binary forms, with or without
 #  modification, are permitted provided that the following conditions
@@ -38,30 +40,7 @@ $(eval $(call addlib_s,libintel_intrinsics,$(CONFIG_LIBINTEL_INTRINSICS)))
 ################################################################################
 # Library includes
 ################################################################################
+ifeq ($(CONFIG_LIBINTEL_INTRINSICS),y)
 CINCLUDES-$(CONFIG_LIBINTEL_INTRINSICS) += -I$(LIBINTEL_INTRINSICS_BASE)/include
 CXXINCLUDES-$(CONFIG_LIBINTEL_INTRINSICS) += -I$(LIBINTEL_INTRINSICS_BASE)/include
-
-ifdef CONFIG_SIMD_SSE
-CFLAGS		+= -msse -mfpmath=sse
-CXXFLAGS	+= -msse -mfpmath=sse
-endif
-
-ifdef CONFIG_SIMD_SSE2
-CFLAGS		+= -msse2
-CXXFLAGS	+= -msse2
-endif
-
-ifdef CONFIG_SIMD_SSE3
-CFLAGS		+= -msse3
-CXXFLAGS	+= -msse3
-endif
-
-ifdef CONFIG_SIMD_SSE4
-CFLAGS		+= -msse4
-CXXFLAGS	+= -msse4
-endif
-
-ifdef CONFIG_SIMD_AVX
-CFLAGS		+= -mavx
-CXXFLAGS	+= -mavx
 endif
