@@ -41,6 +41,9 @@ $(eval $(call addlib_s,libintel_intrinsics,$(CONFIG_LIBINTEL_INTRINSICS)))
 # Library includes
 ################################################################################
 ifeq ($(CONFIG_LIBINTEL_INTRINSICS),y)
+CINCLUDES-$(call have_gcc) += -I$(LIBINTEL_INTRINSICS_BASE)/include-gcc
+CXXINCLUDES-$(call have_gcc) += -I$(LIBINTEL_INTRINSICS_BASE)/include-gcc
+
 CINCLUDES-$(call have_clang) += -I$(LIBINTEL_INTRINSICS_BASE)/include-llvm
 CXXINCLUDES-$(call have_clang) += -I$(LIBINTEL_INTRINSICS_BASE)/include-llvm
 endif
