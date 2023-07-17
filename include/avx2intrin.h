@@ -92,25 +92,41 @@ _mm256_add_epi64(__m256i __a, __m256i __b)
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_adds_epi8(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_add_sat((__v32qs)__a, (__v32qs)__b);
+#else
   return (__m256i)__builtin_ia32_paddsb256((__v32qi)__a, (__v32qi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_adds_epi16(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_add_sat((__v16hi)__a, (__v16hi)__b);
+#else
   return (__m256i)__builtin_ia32_paddsw256((__v16hi)__a, (__v16hi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_adds_epu8(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_add_sat((__v32qu)__a, (__v32qu)__b);
+#else
   return (__m256i)__builtin_ia32_paddusb256((__v32qi)__a, (__v32qi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_adds_epu16(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_add_sat((__v16hu)__a, (__v16hu)__b);
+#else
   return (__m256i)__builtin_ia32_paddusw256((__v16hi)__a, (__v16hi)__b);
+#endif
 }
 
 #define _mm256_alignr_epi8(a, b, n) \
@@ -628,25 +644,41 @@ _mm256_sub_epi64(__m256i __a, __m256i __b)
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_subs_epi8(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_sub_sat((__v32qs)__a, (__v32qs)__b);
+#else
   return (__m256i)__builtin_ia32_psubsb256((__v32qi)__a, (__v32qi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_subs_epi16(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_sub_sat((__v16hi)__a, (__v16hi)__b);
+#else
   return (__m256i)__builtin_ia32_psubsw256((__v16hi)__a, (__v16hi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_subs_epu8(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_sub_sat((__v32qu)__a, (__v32qu)__b);
+#else
   return (__m256i)__builtin_ia32_psubusb256((__v32qi)__a, (__v32qi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
 _mm256_subs_epu16(__m256i __a, __m256i __b)
 {
+#if (__clang_major__ > 14)
+  return (__m256i)__builtin_elementwise_sub_sat((__v16hu)__a, (__v16hu)__b);
+#else
   return (__m256i)__builtin_ia32_psubusw256((__v16hi)__a, (__v16hi)__b);
+#endif
 }
 
 static __inline__ __m256i __DEFAULT_FN_ATTRS256
