@@ -13,9 +13,15 @@
 #ifndef __AVX512BF16INTRIN_H
 #define __AVX512BF16INTRIN_H
 
+#if (__clang_major__ > 15)
+typedef __bf16 __v32bf __attribute__((__vector_size__(64), __aligned__(64)));
+typedef __bf16 __m512bh __attribute__((__vector_size__(64), __aligned__(64)));
+typedef __bf16 __bfloat16;
+#else
 typedef short __m512bh __attribute__((__vector_size__(64), __aligned__(64)));
 typedef short __m256bh __attribute__((__vector_size__(32), __aligned__(32)));
 typedef unsigned short __bfloat16;
+#endif
 
 #define __DEFAULT_FN_ATTRS512 \
   __attribute__((__always_inline__, __nodebug__, __target__("avx512bf16"), \
