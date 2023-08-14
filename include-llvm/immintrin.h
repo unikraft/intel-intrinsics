@@ -509,9 +509,11 @@ _storebe_i64(void * __P, long long __D) {
 #endif
 #endif
 
+#if (__clang_major__ >= 11)
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__AMXTILE__) || defined(__AMXINT8__) || defined(__AMXBF16__)
 #include <amxintrin.h>
+#endif
 #endif
 
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
@@ -529,6 +531,7 @@ _storebe_i64(void * __P, long long __D) {
 #include <enqcmdintrin.h>
 #endif
 
+#if (__clang_major__ >= 11)
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__SERIALIZE__)
 #include <serializeintrin.h>
@@ -537,6 +540,7 @@ _storebe_i64(void * __P, long long __D) {
 #if !(defined(_MSC_VER) || defined(__SCE__)) || __has_feature(modules) ||      \
     defined(__TSXLDTRK__)
 #include <tsxldtrkintrin.h>
+#endif
 #endif
 
 #if defined(_MSC_VER) && __has_extension(gnu_asm)
