@@ -24,11 +24,13 @@
 #ifndef _MWAITINTRIN_H_INCLUDED
 #define _MWAITINTRIN_H_INCLUDED
 
+#if ((__GNUC__ >= 12) || (__GNUC__ == 11 && __GNUC_MINOR__ >= 3))
 #ifndef __MWAIT__
 #pragma GCC push_options
 #pragma GCC target("mwait")
 #define __DISABLE_MWAIT__
 #endif /* __MWAIT__ */
+#endif /* GCC >= 11.3 */
 
 extern __inline void
 __attribute__((__gnu_inline__, __always_inline__, __artificial__))
